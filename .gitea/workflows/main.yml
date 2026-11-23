@@ -29,9 +29,8 @@ jobs:
           docker buildx create --name mybuilder --use builders
       - name: Build and push (amd64)
         run: |
-          REG='${{ secrets.DOCKER_REG_URL }}'
+          REG='zot.endsy.me'
           NAME="${GITHUB_REPOSITORY##*/}"
-          echo '${{ secrets.DOCKER_REG_PW }}' | docker login "$REG" -u '${{ secrets.DOCKER_REG_UN }}' --password-stdin
           docker buildx build --platform linux/amd64 \
             -t "$REG/library/${NAME}:${{ steps.tag.outputs.tag }}-amd64" \
             --push .
@@ -49,9 +48,8 @@ jobs:
           docker buildx create --name mybuilder --use builders
       - name: Build and push (arm64)
         run: |
-          REG='${{ secrets.DOCKER_REG_URL }}'
+          REG='zot.endsy.me'
           NAME="${GITHUB_REPOSITORY##*/}"
-          echo '${{ secrets.DOCKER_REG_PW }}' | docker login "$REG" -u '${{ secrets.DOCKER_REG_UN }}' --password-stdin
           docker buildx build --platform linux/arm64 \
             -t "$REG/library/${NAME}:${{ needs.amd64.outputs.tag }}-arm64" \
             --push .
@@ -62,10 +60,9 @@ jobs:
     steps:
       - name: Combine into multi-arch manifest
         run: |
-          REG='${{ secrets.DOCKER_REG_URL }}'
+          REG='zot.endsy.me'
           NAME="${GITHUB_REPOSITORY##*/}"
           TAG="${{ needs.amd64.outputs.tag }}"
-          echo '${{ secrets.DOCKER_REG_PW }}' | docker login "$REG" -u '${{ secrets.DOCKER_REG_UN }}' --password-stdin
           docker buildx imagetools create \
             -t "$REG/library/${NAME}:${TAG}" \
             "$REG/library/${NAME}:${TAG}-amd64" \
